@@ -1,11 +1,12 @@
 <?php
 // add.php
+// ✅ Allow frontend from GitHub Pages
 header("Access-Control-Allow-Origin: https://ara-11.github.io");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Content-Type: application/json");
 
-// Handle preflight requests
+// ✅ Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -17,7 +18,8 @@ $data = json_decode(file_get_contents("php://input"));
 
 if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   try {
-    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)");
+    // ✅ Use PostgreSQL parameter placeholders
+    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES ($1, $2, $3)");
     $stmt->execute([$data->name, $data->quantity, $data->price]);
 
     echo json_encode(["message" => "Product added successfully"]);
@@ -27,7 +29,6 @@ if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
 } else {
   echo json_encode(["message" => "Invalid data"]);
 }
-
 
 //add.php
 /*
