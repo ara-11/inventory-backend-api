@@ -17,8 +17,8 @@ $data = json_decode(file_get_contents("php://input"));
 if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   try {
     // ✅ Use PostgreSQL parameter placeholders
-    //$stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES ($1, $2, $3)");
-    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES ($1, $2, $3)");
+    //$stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)");
     $stmt->execute([$data->name, $data->quantity, $data->price]);
 
     echo json_encode(["message" => "Product added successfully"]);
