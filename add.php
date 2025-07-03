@@ -14,6 +14,9 @@ include 'db.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
+// ✅ Debug: log incoming data to stderr (visible in Render logs)
+error_log("Incoming POST data: " . print_r($data, true));
+
 if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   try {
     // ✅ Use PostgreSQL parameter placeholders
