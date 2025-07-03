@@ -19,8 +19,8 @@ error_log("Incoming POST data: " . print_r($data, true));
 
 if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   try {
-    // ✅ Use PostgreSQL parameter placeholders
-    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES ($1, $2, $3)");
+    // ✅ Use named parameters for PostgreSQL PDO
+    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (:name, :quantity, :price)");
     //$stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)");
     $stmt->execute([$data->name, $data->quantity, $data->price]);
 
