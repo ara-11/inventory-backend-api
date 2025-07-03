@@ -94,7 +94,7 @@ Make sure your `.php` files connect to your **Render PostgreSQL database** and h
 ## 📢 Contact
 
 **Ara D.** — *Tambay for now*
-* [LinkedIn](www.linkedin.com/in/ara-mae-duco)
+* [LinkedIn](https://www.linkedin.com/in/ara-mae-duco)
 * [GitHub](https://github.com/ara-11)
 
 ---
