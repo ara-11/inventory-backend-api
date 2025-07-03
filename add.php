@@ -23,10 +23,16 @@ if(isset($data->name) && isset($data->quantity) && isset($data->price)) {
 
 <?php
 // add.php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: https://ara-11.github.io");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Content-Type: application/json");
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 include 'db.php';
 
@@ -45,3 +51,5 @@ if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   echo json_encode(["message" => "Invalid data"]);
 }
 ?>
+
+
