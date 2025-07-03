@@ -1,11 +1,15 @@
-# Use the official PHP image with Apache
+# Use official PHP with Apache
 FROM php:8.1-apache
 
-# Enable mod_rewrite (optional but useful for REST APIs)
+# Enable mod_rewrite (optional)
 RUN a2enmod rewrite
 
-# Copy all your PHP files to the Apache web root
+# Install PostgreSQL PDO driver
+RUN apt-get update && apt-get install -y libpq-dev \
+  && docker-php-ext-install pdo pdo_pgsql
+
+# Copy project files to Apache web root
 COPY . /var/www/html/
 
-# Set permissions (optional but good practice)
+# Set proper permissions
 RUN chown -R www-data:www-data /var/www/html
