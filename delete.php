@@ -9,21 +9,26 @@ header("Content-Type: application/json");
 include 'db.php';
 
 $data = json_decode(file_get_contents("php://input"));
+
+$id = isset($data->id) ? intval($data->id) : null;
 // Debug log (optional for Render logs)
 error_log("🗑️ DELETE REQUEST: " . print_r($data, true));//Moved the error_log() after $data is set
 
-if (isset($data->id)) {
+if ($id) {
   try {
-     // ✅ PostgreSQL-style placeholder
     $stmt = $conn->prepare("DELETE FROM products WHERE id = $1");
-    $stmt->execute([$data->id]);
+    $stmt->execute([$id]);
 
-    echo json_encode(["message" => "Product deleted successfully"]);
+    if ($stmt->rowCount() > 0) {
+      echo json_encode(["message" => "Product deleted successfully"]);
+    } else {
+      echo json_encode(["error" => "No product found with that ID"]);
+    }
   } catch (PDOException $e) {
     echo json_encode(["error" => "Deletion failed: " . $e->getMessage()]);
   }
 } else {
-  echo json_encode(["message" => "Invalid ID"]);
+  echo json_encode(["error" => "Invalid ID"]);
 }
 /*
 include 'db.php';
