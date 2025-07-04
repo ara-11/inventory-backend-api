@@ -28,9 +28,10 @@ error_log("🗑️ DELETE REQUEST: " . print_r($data, true));
 
 // ✅ Extract and validate ID
 //if (isset($data['id']) && is_numeric($data['id'])) {
+
 // ✅ Extract and validate ID (object access)
 if (isset($data->id) && is_numeric($data->id)) {
-  $id = intval($data['id']);
+  $id = intval($data->id);  // ✅ Object-style access
 
   try {
     // ✅ PostgreSQL-safe delete with positional placeholder
@@ -41,8 +42,10 @@ if (isset($data->id) && is_numeric($data->id)) {
     error_log("🧾 Deleted ID: $id | Rows affected: $deleted");
 
     if ($deleted > 0) {
+      http_response_code(200); // ✅ optional, but clear
       echo json_encode(["message" => "Product deleted successfully"]);
     } else {
+      http_response_code(404); // ⛔ not found
       echo json_encode(["error" => "No product found with that ID"]);
     }
 
