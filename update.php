@@ -4,6 +4,7 @@ header("Access-Control-Allow-Origin: https://ara-11.github.io");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Content-Type: application/json");
+header("X-Content-Type-Options: nosniff");
 /*
 include 'db.php';
 
