@@ -8,10 +8,9 @@ header("Content-Type: application/json");
 
 include 'db.php';
 
-// Debug log (optional for Render logs)
-error_log("🗑️ DELETE REQUEST: " . print_r($data, true));
-
 $data = json_decode(file_get_contents("php://input"));
+// Debug log (optional for Render logs)
+error_log("🗑️ DELETE REQUEST: " . print_r($data, true));//Moved the error_log() after $data is set
 
 if (isset($data->id)) {
   try {
