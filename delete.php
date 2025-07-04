@@ -36,7 +36,7 @@ if (isset($data->id) && is_numeric($data->id)) {
   try {
     // ✅ PostgreSQL-safe delete with positional placeholder
     $stmt = $conn->prepare("DELETE FROM products WHERE id = $1");
-    $stmt->execute([$id]);
+    $stmt->execute([$id]); //can you check this line
 
     $deleted = $stmt->rowCount();
     error_log("🧾 Deleted ID: $id | Rows affected: $deleted");
