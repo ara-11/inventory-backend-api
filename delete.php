@@ -18,13 +18,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 include 'db.php';
 
 // ✅ Decode the incoming JSON
-$data = json_decode(file_get_contents("php://input"), true); // decode as array
+//$data = json_decode(file_get_contents("php://input"), true); // decode as array
+
+// ✅ Decode the incoming JSON as an object
+$data = json_decode(file_get_contents("php://input")); // ← no second argument
 
 // ✅ Log raw incoming data
 error_log("🗑️ DELETE REQUEST: " . print_r($data, true));
 
 // ✅ Extract and validate ID
-if (isset($data['id']) && is_numeric($data['id'])) {
+//if (isset($data['id']) && is_numeric($data['id'])) {
+// ✅ Extract and validate ID (object access)
+if (isset($data->id) && is_numeric($data->id)) {
   $id = intval($data['id']);
 
   try {
