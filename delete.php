@@ -24,6 +24,7 @@ if ($id) {
     // PostgreSQL-style parameterized query
     $stmt = $conn->prepare("DELETE FROM products WHERE id = $1");
     $stmt->execute([$id]);
+    error_log("🧾 Executed delete on ID: " . $id . ", Rows affected: " . $stmt->rowCount());
 
     if ($stmt->rowCount() > 0) {
       echo json_encode(["message" => "Product deleted successfully"]);
