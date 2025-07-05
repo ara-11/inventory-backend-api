@@ -1,15 +1,23 @@
 <?php
 // login.php
-// 🔒 Ensure secure session cookie settings
-session_set_cookie_params([
-  'lifetime' => 0,
-  'path' => '/',
-  'domain' => '', // let PHP auto-set
-  'secure' => true,
-  'httponly' => true,
-  'samesite' => 'None', // ⛔ MUST BE EXACTLY 'None'
-]);
+
 session_start();
+
+// 🔐 Manually re-send the session cookie
+$cookieParams = session_get_cookie_params();// 🔒 Ensure secure session cookie settings
+setcookie(
+  session_name(),
+  session_id(),
+  [
+    'expires' => time() + 3600,
+    'path' => $cookieParams["path"],
+    'domain' => '', // optional
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'None',
+  ]
+);
+
 
 // ✅ Handle preflight request immediately
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
