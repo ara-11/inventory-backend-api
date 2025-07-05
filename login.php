@@ -36,6 +36,7 @@ header("X-Content-Type-Options: nosniff");
 include 'db.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
+error_log("🔥 Login POST received: " . file_get_contents("php://input"));
 $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 
