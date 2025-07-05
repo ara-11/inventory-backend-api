@@ -1,6 +1,9 @@
 <?php
 //check_session.php
 session_start();
+ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_secure', '1');
+
 
 // ✅ Headers for frontend access
 header("Content-Type: application/json");

@@ -1,5 +1,10 @@
 <?php
+//login.php
+
 session_start();
+ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_secure', '1');
+
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: https://ara-11.github.io"); // ✅ frontend domain
 header("Access-Control-Allow-Credentials: true"); //need to update your backend (on Render) to explicitly allow credentials in CORS responses.
