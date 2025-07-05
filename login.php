@@ -1,22 +1,27 @@
 <?php
-//login.php
+// login.php
+
+// ✅ Handle preflight request immediately
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: https://ara-11.github.io");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Headers: Content-Type");
+    header("Access-Control-Allow-Methods: POST, OPTIONS");
+    header("X-Content-Type-Options: nosniff");
+    http_response_code(200);
+    exit();
+}
 
 session_start();
 ini_set('session.cookie_samesite', 'None');
 ini_set('session.cookie_secure', '1');
 
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: https://ara-11.github.io"); // ✅ frontend domain
-header("Access-Control-Allow-Credentials: true"); //need to update your backend (on Render) to explicitly allow credentials in CORS responses.
+header("Access-Control-Allow-Origin: https://ara-11.github.io");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("X-Content-Type-Options: nosniff");
-
-// ✅ Preflight support
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 include 'db.php';
 
