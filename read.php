@@ -1,43 +1,42 @@
 <?php
 // read.php
-session_start();
 
-// 🔐 Manually re-send the session cookie
-$cookieParams = session_get_cookie_params();
-setcookie(
-  session_name(),
-  session_id(),
-  [
-    'expires' => time() + 3600,
-    'path' => $cookieParams["path"],
-    'domain' => '', // optional
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'None',
-  ]
-);
-
-header("Access-Control-Allow-Origin: https://ara-11.github.io");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Content-Type: application/json");
-header("X-Content-Type-Options: nosniff");
-
-if (!isset($_SESSION['user_id'])) {
-  http_response_code(403); // Forbidden
-  echo json_encode(["error" => "Unauthorized"]);
+// ✅ Handle preflight OPTIONS request first
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  header("Access-Control-Allow-Origin: https://ara-11.github.io");
+  header("Access-Control-Allow-Headers: Content-Type");
+  header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+  header("Access-Control-Allow-Credentials: true");
+  header("X-Content-Type-Options: nosniff");
+  http_response_code(200);
   exit();
 }
 
-/**include 'db.php';
+// 🔒 Secure session cookie BEFORE session_start
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => '',
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'None',
+]);
+session_start();
 
-$stmt = $conn->prepare("SELECT * FROM products");
-$stmt->execute();
+// ✅ CORS and Content Headers
+header("Access-Control-Allow-Origin: https://ara-11.github.io");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json");
+header("X-Content-Type-Options: nosniff");
 
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode($products); */
-
+// ✅ Session Check
+if (!isset($_SESSION['user_id'])) {
+  http_response_code(403);
+  echo json_encode(["error" => "Unauthorized"]);
+  exit();
+}
 
 include 'db.php';
 
@@ -48,6 +47,7 @@ try {
   $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
   echo json_encode($products);
 } catch (PDOException $e) {
+  http_response_code(500);
   echo json_encode(["error" => "Failed to fetch products: " . $e->getMessage()]);
 }
 ?>

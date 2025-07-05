@@ -1,25 +1,18 @@
 <?php
 // login.php
 
+// ✅ Set secure session cookie params BEFORE session_start
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => '', // Let PHP auto-detect
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'None',
+]);
 session_start();
 
-// 🔐 Manually re-send the session cookie
-$cookieParams = session_get_cookie_params();// 🔒 Ensure secure session cookie settings
-setcookie(
-  session_name(),
-  session_id(),
-  [
-    'expires' => time() + 3600,
-    'path' => $cookieParams["path"],
-    'domain' => '', // optional
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'None',
-  ]
-);
-
-
-// ✅ Handle preflight request immediately
+// ✅ Handle preflight OPTIONS request first
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header("Access-Control-Allow-Origin: https://ara-11.github.io");
     header("Access-Control-Allow-Credentials: true");
@@ -30,10 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-
-ini_set('session.cookie_samesite', 'None');
-ini_set('session.cookie_secure', '1');
-
+// ✅ Now send CORS and content headers (AFTER session_start)
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: https://ara-11.github.io");
 header("Access-Control-Allow-Credentials: true");
@@ -44,7 +34,6 @@ header("X-Content-Type-Options: nosniff");
 include 'db.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
-error_log("🔥 Login POST received: " . file_get_contents("php://input"));
 $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 
@@ -55,6 +44,22 @@ try {
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
+
+        // ✅ Explicitly resend the cookie (Render sometimes requires this)
+        $cookieParams = session_get_cookie_params();
+        setcookie(
+            session_name(),
+            session_id(),
+            [
+                'expires' => time() + 3600,
+                'path' => $cookieParams["path"],
+                'domain' => '',
+                'secure' => true,
+                'httponly' => true,
+                'samesite' => 'None',
+            ]
+        );
+
         echo json_encode(["success" => true, "message" => "Login successful"]);
     } else {
         http_response_code(401);

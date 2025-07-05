@@ -1,48 +1,54 @@
 <?php
-//add.php
-// 🔒 Ensure secure session cookie settings
+// add.php
+
+// ✅ Handle preflight OPTIONS request early
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: https://ara-11.github.io");
+    header("Access-Control-Allow-Headers: Content-Type");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Credentials: true");
+    header("X-Content-Type-Options: nosniff");
+    http_response_code(200);
+    exit();
+}
+
+// ✅ Set secure session cookie settings BEFORE session_start
 session_set_cookie_params([
   'lifetime' => 0,
   'path' => '/',
-  'domain' => '', // let PHP auto-set
+  'domain' => '',
   'secure' => true,
   'httponly' => true,
-  'samesite' => 'None', // ⛔ MUST BE EXACTLY 'None'
+  'samesite' => 'None',
 ]);
 session_start();
 
-// ✅ CORS Headers
+// ✅ CORS Headers AFTER session_start
 header("Access-Control-Allow-Origin: https://ara-11.github.io");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 header("X-Content-Type-Options: nosniff");
 
-
+// ✅ Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-  http_response_code(403); // Forbidden
+  http_response_code(403);
   echo json_encode(["error" => "Unauthorized"]);
   exit();
-}
-
-// ✅ Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
 }
 
 include 'db.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
-// ✅ Debug: log incoming data to stderr (visible in Render logs)
+// ✅ Log for Render debugging
 error_log("Incoming POST data: " . print_r($data, true));
 
+// ✅ Validate & insert
 if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   try {
-    // ✅ Use named parameters for PostgreSQL PDO
-    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (:name, :quantity, :price)");
-    //$stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)");
     $stmt->execute([$data->name, $data->quantity, $data->price]);
 
     echo json_encode(["message" => "Product added successfully"]);
@@ -53,5 +59,3 @@ if (isset($data->name) && isset($data->quantity) && isset($data->price)) {
   echo json_encode(["message" => "Invalid data"]);
 }
 ?>
-
-
