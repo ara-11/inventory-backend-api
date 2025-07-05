@@ -1,6 +1,15 @@
 <?php
 // delete.php
 
+// 🔒 Ensure secure session cookie settings
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => '', // let PHP auto-set
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'None', // ⛔ MUST BE EXACTLY 'None'
+]);
 session_start();
 
 // ✅ CORS Headers

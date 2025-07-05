@@ -1,5 +1,15 @@
 <?php
 // login.php
+// 🔒 Ensure secure session cookie settings
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => '', // let PHP auto-set
+  'secure' => true,
+  'httponly' => true,
+  'samesite' => 'None', // ⛔ MUST BE EXACTLY 'None'
+]);
+session_start();
 
 // ✅ Handle preflight request immediately
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -12,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-session_start();
+
 ini_set('session.cookie_samesite', 'None');
 ini_set('session.cookie_secure', '1');
 
