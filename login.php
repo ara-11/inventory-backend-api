@@ -2,6 +2,7 @@
 session_start();
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: https://ara-11.github.io"); // ✅ frontend domain
+header("Access-Control-Allow-Credentials: true"); //need to update your backend (on Render) to explicitly allow credentials in CORS responses.
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("X-Content-Type-Options: nosniff");
