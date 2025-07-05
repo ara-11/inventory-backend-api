@@ -36,7 +36,7 @@ if (isset($data->id) && is_numeric($data->id)) {
   try {
     // ✅ PostgreSQL-safe delete with positional placeholder
     // ✅ Replace $1 with ?
-    $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");// I debugged you for almost 2 days!!!! ikaw lang pala yung culprit
     $stmt->execute([$id]); //can you check this line
 
     $deleted = $stmt->rowCount();

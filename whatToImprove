@@ -1,0 +1,91 @@
+Great question. 💯 Since your **frontend** is public and the **backend is a PHP API**, security mostly depends on what’s happening in the backend. Here’s a straight breakdown of potential security issues and how to improve them:
+
+---
+
+## 🔐 Security Review: Your Inventory System
+
+### 🔎 1. **No Authentication**
+
+* **Problem**: Anyone who knows the API URL (like `/add.php`, `/delete.php?id=1`) can manipulate the data.
+* **Fix**: Add **login + token-based authentication (JWT or session)** so only authorized users can use the API.
+
+### 🔓 2. **Public API Access**
+
+* **Problem**: Your API is probably open — anyone can run `fetch('https://your-api.com/delete.php?id=1')`.
+* **Fix**:
+
+  * Restrict API access to only logged-in users.
+  * Use **API keys** or **CORS rules** to limit access.
+
+### ⚠️ 3. **SQL Injection Risk**
+
+* If your PHP code uses raw SQL like:
+
+  ```php
+  $query = "DELETE FROM products WHERE id = $_GET['id']";
+  ```
+
+  This is vulnerable to **SQL Injection** (someone can delete all your data).
+
+* **Fix**: Always use **prepared statements**:
+
+  ```php
+  $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
+  $stmt->bind_param("i", $id);
+  ```
+
+### 🛡️ 4. **No Input Validation**
+
+* **Problem**: Users can submit invalid or dangerous data like `"<script>alert(1)</script>"` in product name.
+* **Fix**:
+
+  * Sanitize inputs in PHP using `htmlspecialchars()` or better: validate data strictly (e.g., name = string, price = number).
+  * On frontend, validate before submitting.
+
+### 🧠 5. **No Rate Limiting**
+
+* **Problem**: Your API can be spammed with requests (e.g., 1000 add/delete requests).
+* **Fix**:
+
+  * Use **rate limiting** (e.g., limit to 20 requests per minute per IP).
+  * Use tools like Cloudflare or add rate-limiting logic in PHP.
+
+### ❌ 6. **Exposing Too Much Info**
+
+* If your API returns raw database errors or internal PHP errors, it helps attackers.
+* **Fix**: Use generic error messages:
+
+  ```php
+  echo json_encode(["error" => "Something went wrong."]);
+  ```
+
+### 🔐 7. **Use HTTPS**
+
+* Make sure your API is hosted on **https\://**, not http\://
+* If you’re using Render or InfinityFree — make sure SSL is enabled.
+
+---
+
+## 🧰 Summary: What to Implement for Security
+
+| # | Feature                       | Status           | Suggestion                              |
+| - | ----------------------------- | ---------------- | --------------------------------------- |
+| 1 | Login/Authentication          | ❌ Missing        | Use login with sessions or JWT tokens   |
+| 2 | SQL Injection Protection      | ❌ Check PHP code | Use prepared statements                 |
+| 3 | Input Validation/Sanitization | ⚠️ Partial       | Validate/sanitize all fields            |
+| 4 | API Protection (CORS)         | ❌ Probably open  | Allow only specific frontend origins    |
+| 5 | Rate Limiting                 | ❌ Missing        | Add basic rate limiting per IP          |
+| 6 | HTTPS                         | ✅ If on GitHub   | Use https for both frontend and backend |
+| 7 | Confirmation Before Delete    | ❌ Missing        | Use `confirm()` in frontend             |
+
+---
+
+### ✅ Want to Add Login System Next?
+
+If you're interested, I can help you build a **simple login system** using:
+
+* PHP + MySQL for backend
+* JWT or session for auth
+* React frontend with login form
+
+Let me know if you want to start this next.
